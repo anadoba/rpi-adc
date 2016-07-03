@@ -7,7 +7,7 @@ import com.pi4j.io.spi.SpiChannel;
 
 import java.io.IOException;
 
-public class AnalogToDigitalConv {
+public class AnalogToDigitalConverter {
 
     private final static int CHECK_DURATION = 2500;
 
@@ -15,7 +15,7 @@ public class AnalogToDigitalConv {
 
     private MCP3008GpioProvider mcp3008 = null;
 
-    public AnalogToDigitalConv() {
+    public AnalogToDigitalConverter() {
         try {
             mcp3008 = new MCP3008GpioProvider(SpiChannel.CS0);
         } catch (IOException e) {
@@ -29,12 +29,15 @@ public class AnalogToDigitalConv {
 
     public void loop() throws InterruptedException {
         for (; ; ) {
-            double ch0 = mcp3008.getValue(MCP3008Pin.CH0);
-            System.out.println("MCP3008 CH0: " + ch0);
+            System.out.println("MCP3008 CH0: " + getPinValuePercentage(MCP3008Pin.CH0));
 
             Thread.sleep(CHECK_DURATION);
         }
     }
 
+    private String getPinValuePercentage(Pin pin) {
+        double d = mcp3008.getValue(pin);
+        return OutputNormalizer.toPercent(d);
+    }
 
 }
